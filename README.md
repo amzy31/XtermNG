@@ -1,45 +1,27 @@
-# Heimdallr Terminal Emulator
+﻿XtermNG - A Simple GTK Terminal Emulator
 
-A terminal,
-We are focused on its lightness and speed!
-Finally, it can be a permanent terminal for you!
-this terminal witten in C and Gtk framework
-because HEIMDALLR must be a SUPER lightweight.
+This is a minimal terminal emulator written in C using GTK+3 and VTE.
+It provides a split-view with two terminals and basic keyboard shortcuts.
 
+Requirements:
+- GTK+3 development libraries
+- VTE terminal widget library
+- GCC compiler
 
-SIZE : 23KB :D
+Build:
+	make
 
+Install system-wide:
+	sudo make install
 
-after compile !!!!!!!!!!!!!!!!!!!!!
+Run:
+	./xtermng
 
+Keyboard shortcuts:
+	Ctrl+Shift+Left  : Previous terminal
+	Ctrl+Shift+Right : Next terminal
+	Ctrl+=           : Zoom in
+	Ctrl+-           : Zoom out
+	Ctrl+0           : Reset zoom
 
-# screenshots
-
-![screenshots](screenshots/1.png)
-
-![screenshots](screenshots/2.png)
-
-![screenshots](screenshots/3.png)
-
-
-# installation (Debian)
-    $ cd debian
-    $ ./preinstallRequirementsDebian.sh
-    $ ./install-heimdallr-debian.py
-
-
-# installation (Fedora)
-    $ cd fedora
-    $ ./preinstallRequirementsFedora.sh
-    $ ./install-heimdallr-fedora.py
-
-
-# update
-    $ heimdallr-update
-
-# exec (local)
-    $ cd debian OR cd fedora
-    $ ./preinstallRequirementsFedora.sh OR ./preinstallRequirementsDebian.sh
-    $ make
-    $ ./heimdallr
-
+The binary is stripped and comes in at around 15KB.
