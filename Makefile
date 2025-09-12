@@ -21,9 +21,9 @@ install: xtermng
 	sudo cp main.py /opt/pck3r/main.py
 	sudo chmod +x /opt/pck3r/main.py
 	sudo ln -sf /opt/pck3r/main.py /bin/xtermng
-	sudo cp -rf ../xdg/xtermng.desktop /usr/share/applications
-	cp -rf ../xdg/xtermng.desktop ~/.local/share/applications
-	sudo cp -rf ../icon/xtermng.png /usr/share/icons/hicolor/256x256/apps/
-	sudo cp -rf ../icon/xtermng.png /usr/share/icons/hicolor/256x256/apps/
-	sudo cp -rf ../icon/xtermng.png /usr/share/icons/
+	sudo cp -rf ./xdg/xtermng.desktop /usr/share/applications
+	cp -rf ./xdg/xtermng.desktop ~/.local/share/applications
+	sudo cp -rf ./icon/xtermng.png /usr/share/icons/hicolor/256x256/apps/
+	sudo cp -rf ./icon/xtermng.png /usr/share/icons/hicolor/256x256/apps/
+	sudo cp -rf ./icon/xtermng.png /usr/share/icons/
 
