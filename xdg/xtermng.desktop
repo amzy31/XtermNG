@@ -1,0 +1,31 @@
+[Desktop Entry]
+path=/usr/bin/
+Version=0.1
+Terminal=false
+Type=Application
+StartupNotify=true
+
+[Desktop Entry]
+Actions=Open;Tray;
+Categories=GTK;GNOME;Utility;
+Comment[en_US]=XtermNG Terminal Emulator
+Comment=XtermNG Terminal Emulator
+Exec=xtermng
+GenericName[en_US]=XtermNG Terminal Emulator
+GenericName=XtermNG Terminal Emulator
+Icon=xtermng
+Keywords=Terminal;XtermNG;xtermng;
+Name[en_US]=XtermNG Terminal Emulator
+Name=XtermNG Terminal Emulator
+StartupNotify=true
+StartupWMClass=xtermng
+Terminal=false
+Type=Application
+
+[Desktop Action Open]
+Exec=xtermng
+Name=Start XtermNG Terminal Emulator
+
+[Desktop Action Tray]
+Exec=xtermng --tray
+Name=Start in System Tray (xtermng)
