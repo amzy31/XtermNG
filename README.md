@@ -10,7 +10,7 @@ Install system-wide:
 	sudo make install
 
 Run:
-	./xtermng
+	make xtermng
 
 Keyboard shortcuts:
 	Ctrl+Shift+Left  : Previous terminal
