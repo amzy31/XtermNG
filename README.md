@@ -9,7 +9,7 @@ Build:
 Install system-wide:
 	sudo make install
 
-Run:
+make executable:
 	make xtermng
 
 Keyboard shortcuts:
