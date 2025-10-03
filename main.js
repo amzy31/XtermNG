@@ -13,15 +13,10 @@ const Gtk = imports.gi.Gtk;
 const Vte = imports.gi.Vte;
 const GLib = imports.gi.GLib;
 const Gdk = imports.gi.Gdk;
-const Gio = imports.gi.Gio;
-const System = imports.system;
 
 const ZOOM_STEP = 0.1;
 const DEFAULT_FONT_SCALE = 1.0;
 
-// Global variables
-let window = null;
-let main_box = null;
 let terminals = [null, null];
 let current_terminal = 0;
 let current_font_scale = DEFAULT_FONT_SCALE;
@@ -52,96 +47,76 @@ function create_terminal(working_dir) {
     return terminal;
 }
 
+function update_font_scale() {
+    for (let term of terminals) {
+        term.set_font_scale(current_font_scale);
+    }
+}
+
 function setup_gui(icon_path) {
-    // Create main horizontal box for split layout
-    main_box = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
+    const window = new Gtk.Window({ type: Gtk.WindowType.TOPLEVEL });
+    const main_box = new Gtk.Box({ orientation: Gtk.Orientation.HORIZONTAL, spacing: 0 });
 
-    // Create vertical boxes for each terminal section
-    let left_box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-    let middle_box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
-
-    // Create terminals
-    let home_dir = GLib.get_home_dir();
+    const home_dir = GLib.get_home_dir();
     terminals[0] = create_terminal(home_dir);
     terminals[1] = create_terminal(home_dir);
 
-    // Add terminals to their respective boxes
+    const left_box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
     left_box.pack_start(terminals[0], true, true, 0);
-    middle_box.pack_start(terminals[1], true, true, 0);
-
-    // Add boxes to main box
     main_box.pack_start(left_box, true, true, 0);
-    main_box.pack_start(middle_box, true, true, 0);
 
-    // Set window properties
+    const right_box = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL, spacing: 0 });
+    right_box.pack_start(terminals[1], true, true, 0);
+    main_box.pack_start(right_box, true, true, 0);
+
     window.set_title("XtermNG");
     if (GLib.file_test(icon_path, GLib.FileTest.EXISTS)) {
         window.set_icon_from_file(icon_path);
     }
     window.add(main_box);
-
-    // Connect signals
     window.connect("destroy", () => Gtk.main_quit());
-    window.connect("key-press-event", on_key_press);
+
+    // Set up accelerators for keyboard shortcuts
+    const accel_group = new Gtk.AccelGroup();
+    accel_group.connect(Gdk.KEY_equal, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE, () => {
+        current_font_scale += ZOOM_STEP;
+        update_font_scale();
+    });
+    accel_group.connect(Gdk.KEY_plus, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE, () => {
+        current_font_scale += ZOOM_STEP;
+        update_font_scale();
+    });
+    accel_group.connect(Gdk.KEY_minus, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE, () => {
+        current_font_scale -= ZOOM_STEP;
+        if (current_font_scale < ZOOM_STEP) current_font_scale = ZOOM_STEP;
+        update_font_scale();
+    });
+    accel_group.connect(Gdk.KEY_0, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE, () => {
+        current_font_scale = DEFAULT_FONT_SCALE;
+        update_font_scale();
+    });
+    accel_group.connect(Gdk.KEY_Left, Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE, () => {
+        current_terminal = (current_terminal - 1 + 2) % 2;
+        terminals[current_terminal].grab_focus();
+    });
+    accel_group.connect(Gdk.KEY_Right, Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK, Gtk.AccelFlags.VISIBLE, () => {
+        current_terminal = (current_terminal + 1) % 2;
+        terminals[current_terminal].grab_focus();
+    });
+    window.add_accel_group(accel_group);
+
+    window.show_all();
+    terminals[0].grab_focus();
+    return window;
 }
 
-function on_key_press(widget, event) {
-    if (event.get_state() & Gdk.ModifierType.CONTROL_MASK) {
-        if (event.get_keyval()[1] === Gdk.KEY_equal || event.get_keyval()[1] === Gdk.KEY_plus) {
-            current_font_scale += ZOOM_STEP;
-        } else if (event.get_keyval()[1] === Gdk.KEY_minus) {
-            current_font_scale -= ZOOM_STEP;
-            if (current_font_scale < ZOOM_STEP) {
-                current_font_scale = ZOOM_STEP;
-            }
-        } else if (event.get_keyval()[1] === Gdk.KEY_0) {
-            current_font_scale = DEFAULT_FONT_SCALE;
-        } else if (event.get_keyval()[1] === Gdk.KEY_w && event.get_state() & Gdk.ModifierType.SHIFT_MASK) {
-            current_terminal = (current_terminal + 1) % 2;
-            terminals[current_terminal].grab_focus();
-            return true;
-        } else if (event.get_keyval()[1] === Gdk.KEY_Left && event.get_state() & Gdk.ModifierType.SHIFT_MASK) {
-            current_terminal = (current_terminal - 1 + 2) % 2;
-            terminals[current_terminal].grab_focus();
-            return true;
-        } else if (event.get_keyval()[1] === Gdk.KEY_Right && event.get_state() & Gdk.ModifierType.SHIFT_MASK) {
-            current_terminal = (current_terminal + 1) % 2;
-            terminals[current_terminal].grab_focus();
-            return true;
-        } else {
-            return false;
-        }
 
-        // Apply font scale to all terminals
-        for (let term of terminals) {
-            term.set_font_scale(current_font_scale);
-        }
-        return true;
-    }
-    return false;
-}
 
 function main() {
-    // Get icon path
-    let home = GLib.get_home_dir();
-    let icon_path = GLib.build_filenamev([home, ".xtermng", "icon", "xtermng.png"]);
+    const icon_path = GLib.build_filenamev([GLib.get_home_dir(), ".xtermng", "icon", "xtermng.png"]);
 
-    // Initialize GTK
     Gtk.init(null);
-
-    // Create window
-    window = new Gtk.Window({ type: Gtk.WindowType.TOPLEVEL });
-
-    // Setup GUI
-    setup_gui(icon_path);
-
-    // Show all widgets
-    window.show_all();
-
-    // Set initial focus to first terminal
-    terminals[0].grab_focus();
-
-    // Run main loop
+    const window = setup_gui(icon_path);
     Gtk.main();
 }
 
