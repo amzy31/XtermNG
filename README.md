@@ -1,6 +1,6 @@
 ﻿XtermNG - A Simple GTK Terminal Emulator
 
-This is a minimal terminal emulator written in PYTHON using GTK+3 and VTE.
+This is a minimal terminal emulator written in JavaScript using GTK+3 and VTE.
 It provides a split-view with two terminals and basic keyboard shortcuts.
 
 Build:
