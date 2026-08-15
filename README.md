@@ -19,4 +19,3 @@ Keyboard shortcuts:
 	Ctrl+-           : Zoom out
 	Ctrl+0           : Reset zoom
 
-The binary is stripped and comes in at around 15KB.
