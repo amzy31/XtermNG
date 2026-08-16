@@ -51,7 +51,7 @@ def setup_gui(icon_path):
     global main_box, terminals, window
 
     # Create main horizontal box for split layout
-    main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+    main_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=3)
 
     # Create vertical boxes for each terminal section
     left_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
